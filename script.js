@@ -10,80 +10,80 @@ if (tg) {
 const products = [
   {
     id: 1,
-    title: 'Букет «Нежный рассвет»',
+    title: 'Букет «Нежность»',
     category: 'Букеты',
-    emoji: '💐',
     price: 2490,
     tag: 'Хит продаж',
-    description: 'Лёгкий букет в пастельной гамме для поздравлений, свиданий и приятных сюрпризов без повода.'
+    image: 'assets/pastel-roses.png',
+    description: 'Воздушный букет из нежно-розовых и кремовых роз в пудровой упаковке.'
   },
   {
     id: 2,
-    title: 'Розы пудровые 15 шт.',
+    title: 'Красные розы 15 шт.',
     category: 'Розы',
-    emoji: '🌹',
     price: 3190,
     tag: 'Классика',
-    description: 'Композиция из пудровых роз с аккуратной упаковкой и атласной лентой.'
+    image: 'assets/red-roses.png',
+    description: 'Эффектный букет из красных роз с акцентной лентой — универсальный подарок.'
   },
   {
     id: 3,
-    title: 'Монобукет из тюльпанов',
-    category: 'Монобукеты',
-    emoji: '🌷',
+    title: 'Белые тюльпаны',
+    category: 'Тюльпаны',
     price: 1890,
     tag: 'Весна',
-    description: 'Яркие тюльпаны, которые создают ощущение весны и отлично подходят для подарка.'
+    image: 'assets/white-tulips.png',
+    description: 'Стильный монобукет из белых тюльпанов с эвкалиптом в светлой упаковке.'
   },
   {
     id: 4,
-    title: 'Коробка с цветами и макаронс',
-    category: 'Подарки',
-    emoji: '🎁',
+    title: 'Пионы премиум',
+    category: 'Пионы',
     price: 3790,
-    tag: 'Подарочный набор',
-    description: 'Цветочная коробка с нежными оттенками и сладким дополнением для особого случая.'
+    tag: 'Премиум',
+    image: 'assets/peony-bouquet.png',
+    description: 'Нежная композиция из розовых пионов и кремовых роз для особого случая.'
   },
   {
     id: 5,
-    title: 'Комнатное растение «Фикус»',
-    category: 'Растения',
-    emoji: '🪴',
-    price: 1590,
-    tag: 'Для дома',
-    description: 'Зелёный акцент для интерьера. Подходит для дома, офиса или учебного пространства.'
+    title: 'Пудровые розы',
+    category: 'Розы',
+    price: 2890,
+    tag: 'Нежный стиль',
+    image: 'assets/pastel-roses.png',
+    description: 'Пастельный букет в современной упаковке, который подходит для любого повода.'
   },
   {
     id: 6,
-    title: 'Букет «Ягодный крем»',
+    title: 'Букет «Романтика»',
     category: 'Букеты',
-    emoji: '🌺',
-    price: 2890,
+    price: 2990,
     tag: 'Новинка',
-    description: 'Авторский букет в розово‑ягодных оттенках с воздушной упаковкой.'
+    image: 'assets/peony-bouquet.png',
+    description: 'Объёмный букет в розово-кремовой гамме с нежной лентой и фактурной упаковкой.'
   },
   {
     id: 7,
-    title: 'Белые розы 11 шт.',
-    category: 'Розы',
-    emoji: '🤍',
-    price: 2590,
+    title: 'Белые тюльпаны deluxe',
+    category: 'Тюльпаны',
+    price: 2290,
     tag: 'Минимализм',
-    description: 'Сдержанный букет из белых роз для тех, кто любит чистый и спокойный стиль.'
+    image: 'assets/white-tulips.png',
+    description: 'Элегантный белый букет в спокойной палитре для стильного и сдержанного подарка.'
   },
   {
     id: 8,
-    title: 'Открытка и свеча',
-    category: 'Подарки',
-    emoji: '🕯️',
-    price: 790,
-    tag: 'Дополнение',
-    description: 'Небольшой подарок, который можно добавить к букету для завершения заказа.'
+    title: 'Букет «Признание»',
+    category: 'Розы',
+    price: 3490,
+    tag: 'Эмоции',
+    image: 'assets/red-roses.png',
+    description: 'Крупный букет из красных роз, который сразу выглядит ярко и празднично.'
   }
 ];
 
-const categories = ['Все', 'Букеты', 'Розы', 'Монобукеты', 'Подарки', 'Растения'];
-const storageKey = 'flower-miniapp-cart-v1';
+const categories = ['Все', 'Букеты', 'Розы', 'Тюльпаны', 'Пионы'];
+const storageKey = 'flower-miniapp-cart-v2';
 
 let cart = JSON.parse(localStorage.getItem(storageKey) || '{}');
 let activeCategory = 'Все';
@@ -118,7 +118,9 @@ function productCard(product) {
   return `
     <article class="product-card">
       <button class="more-btn" data-details="${product.id}" type="button">›</button>
-      <div class="product-visual">${product.emoji}</div>
+      <div class="product-visual">
+        <img src="${product.image}" alt="${product.title}" loading="lazy" />
+      </div>
       <span class="tag">${product.tag}</span>
       <h3>${product.title}</h3>
       <p>${product.description}</p>
@@ -208,14 +210,14 @@ function renderCart() {
       <article class="empty-card">
         <div class="big">🛒</div>
         <h2>Корзина пустая</h2>
-        <p>Добавьте букет или подарок из каталога.</p>
+        <p>Добавьте букет из каталога.</p>
         <button class="primary-btn" data-page="catalog-page" type="button">Перейти в каталог</button>
       </article>
     `;
   } else {
     list.innerHTML = items.map(item => `
       <article class="cart-item">
-        <div class="cart-visual">${item.emoji}</div>
+        <div class="cart-visual"><img src="${item.image}" alt="${item.title}" loading="lazy" /></div>
         <div>
           <h3>${item.title}</h3>
           <p>${formatPrice(item.price)}</p>
@@ -247,7 +249,8 @@ function openProductModal(productId) {
   if (!product) return;
   currentProductId = product.id;
 
-  document.getElementById('modalFlower').textContent = product.emoji;
+  document.getElementById('modalFlower').src = product.image;
+  document.getElementById('modalFlower').alt = product.title;
   document.getElementById('modalCategory').textContent = product.category;
   document.getElementById('modalTitle').textContent = product.title;
   document.getElementById('modalDescription').textContent = product.description;
@@ -290,11 +293,11 @@ function checkoutSuccess() {
   if (tg?.showPopup) {
     tg.showPopup({
       title: 'Заказ оформлен',
-      message: 'Демо‑заказ успешно создан. Для диплома это показывает сценарий покупки.',
+      message: 'Демо-заказ успешно создан. Для диплома это показывает сценарий покупки.',
       buttons: [{ type: 'ok' }]
     });
   } else {
-    alert('Заказ оформлен! Это демонстрационный сценарий.' );
+    alert('Заказ оформлен! Это демонстрационный сценарий.');
   }
 }
 
