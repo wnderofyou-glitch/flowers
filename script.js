@@ -1,3 +1,4 @@
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzD8IObF3-2w4KQBv8ZxQwysrBGEUI1QEqveA4-pVU9dx_s03W5tgOmTcujIDnknyJAcQ/exec";
 const tg = window.Telegram?.WebApp;
 
 if (tg) {
@@ -314,20 +315,41 @@ function buildOrderData(form) {
 
 function submitOrder(form) {
   const orderData = buildOrderData(form);
-  const orderJson = JSON.stringify(orderData);
 
-  if (orderJson.length > 3900) {
-    alert('Слишком большой заказ для отправки в Telegram. Уменьшите количество позиций.');
-    return;
+  const googleOrderData = {
+    name: orderData.customer.name,
+    phone: orderData.customer.phone,
+    address: orderData.customer.address,
+    comment: orderData.customer.comment,
+    items: orderData.items.map(item => ({
+      title: item.title,
+      price: item.price,
+      qty: item.qty
+    })),
+    total: orderData.total
+  };
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(googleOrderData)
+  });
+
+  if (tg?.HapticFeedback) {
+    tg.HapticFeedback.notificationOccurred('success');
   }
 
-  if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-
-  if (tg?.sendData) {
-    tg.sendData(orderJson);
+  if (tg?.showPopup) {
+    tg.showPopup({
+      title: "Заказ оформлен",
+      message: "Спасибо! Заказ отправлен администратору.",
+      buttons: [{ type: "ok" }]
+    });
   } else {
-    console.log('Демо-заказ:', orderData);
-    alert('Демо-заказ создан. В Telegram он будет отправлен боту.');
+    alert("Заказ оформлен и отправлен!");
   }
 
   clearCart();
