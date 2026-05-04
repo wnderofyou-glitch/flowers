@@ -329,14 +329,10 @@ function submitOrder(form) {
     total: orderData.total
   };
 
-  fetch(GOOGLE_SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify(googleOrderData)
-  });
+  const url = GOOGLE_SCRIPT_URL + "?order=" + encodeURIComponent(JSON.stringify(googleOrderData));
+
+  const img = new Image();
+  img.src = url;
 
   if (tg?.HapticFeedback) {
     tg.HapticFeedback.notificationOccurred('success');
