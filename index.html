@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#5c8f69" />
   <title>Bloom Mini App</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=3" />
 </head>
 <body>
   <main class="app-shell">
@@ -122,6 +122,7 @@
         <div class="avatar">👤</div>
         <div>
           <h2>Гостевой режим</h2>
+          <p>Демо‑профиль для защиты дипломного проекта</p>
         </div>
       </article>
 
@@ -174,16 +175,16 @@
       <p class="eyebrow">быстрый заказ</p>
       <h2>Данные получателя</h2>
       <form id="checkoutForm" class="checkout-form">
-        <input type="text" placeholder="Имя" required />
-        <input type="tel" placeholder="Телефон" required />
-        <input type="text" placeholder="Адрес доставки" required />
-        <textarea placeholder="Комментарий к заказу"></textarea>
+        <input type="text" name="name" placeholder="Имя" required />
+        <input type="tel" name="phone" placeholder="Телефон" required />
+        <input type="text" name="address" placeholder="Адрес доставки" required />
+        <textarea name="comment" placeholder="Комментарий к заказу"></textarea>
         <button class="primary-btn full" type="submit">Подтвердить заказ</button>
       </form>
     </article>
   </div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="script.js"></script>
+  <script src="script.js?v=3"></script>
 </body>
 </html>

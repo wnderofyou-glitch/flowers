@@ -83,7 +83,7 @@ const products = [
 ];
 
 const categories = ['Все', 'Букеты', 'Розы', 'Тюльпаны', 'Пионы'];
-const storageKey = 'flower-miniapp-cart-v2';
+const storageKey = 'flower-miniapp-cart-v3';
 
 let cart = JSON.parse(localStorage.getItem(storageKey) || '{}');
 let activeCategory = 'Все';
@@ -201,9 +201,17 @@ function removeItem(productId) {
   renderCart();
 }
 
+function getOrderTotals() {
+  const items = getCartItems();
+  const itemsPrice = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const delivery = itemsPrice === 0 ? 0 : itemsPrice >= 3990 ? 0 : 300;
+  const total = itemsPrice + delivery;
+  return { items, itemsPrice, delivery, total };
+}
+
 function renderCart() {
   const list = document.getElementById('cartList');
-  const items = getCartItems();
+  const { items, itemsPrice, delivery, total } = getOrderTotals();
 
   if (!items.length) {
     list.innerHTML = `
@@ -233,10 +241,6 @@ function renderCart() {
       </article>
     `).join('');
   }
-
-  const itemsPrice = items.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const delivery = itemsPrice === 0 ? 0 : itemsPrice >= 3990 ? 0 : 300;
-  const total = itemsPrice + delivery;
 
   document.getElementById('cartItemsPrice').textContent = formatPrice(itemsPrice);
   document.getElementById('deliveryPrice').textContent = delivery ? formatPrice(delivery) : 'Бесплатно';
@@ -283,22 +287,53 @@ function clearCart() {
   renderCart();
 }
 
-function checkoutSuccess() {
-  clearCart();
-  closeCheckoutModal();
-  showPage('home-page');
+function buildOrderData(form) {
+  const formData = new FormData(form);
+  const { items, itemsPrice, delivery, total } = getOrderTotals();
+
+  return {
+    type: 'flower_order',
+    createdAt: new Date().toLocaleString('ru-RU'),
+    customer: {
+      name: String(formData.get('name') || '').trim(),
+      phone: String(formData.get('phone') || '').trim(),
+      address: String(formData.get('address') || '').trim(),
+      comment: String(formData.get('comment') || '').trim()
+    },
+    items: items.map(item => ({
+      title: item.title,
+      price: item.price,
+      qty: item.qty,
+      sum: item.price * item.qty
+    })),
+    itemsPrice,
+    delivery,
+    total
+  };
+}
+
+function submitOrder(form) {
+  const orderData = buildOrderData(form);
+  const orderJson = JSON.stringify(orderData);
+
+  if (orderJson.length > 3900) {
+    alert('Слишком большой заказ для отправки в Telegram. Уменьшите количество позиций.');
+    return;
+  }
 
   if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
 
-  if (tg?.showPopup) {
-    tg.showPopup({
-      title: 'Заказ оформлен',
-      message: 'Демо-заказ успешно создан. Для диплома это показывает сценарий покупки.',
-      buttons: [{ type: 'ok' }]
-    });
+  if (tg?.sendData) {
+    tg.sendData(orderJson);
   } else {
-    alert('Заказ оформлен! Это демонстрационный сценарий.');
+    console.log('Демо-заказ:', orderData);
+    alert('Демо-заказ создан. В Telegram он будет отправлен боту.');
   }
+
+  clearCart();
+  closeCheckoutModal();
+  form.reset();
+  showPage('home-page');
 }
 
 document.addEventListener('click', (event) => {
@@ -345,8 +380,7 @@ document.getElementById('clearCartBtn').addEventListener('click', clearCart);
 document.getElementById('openCheckoutBtn').addEventListener('click', openCheckoutModal);
 document.getElementById('checkoutForm').addEventListener('submit', (event) => {
   event.preventDefault();
-  checkoutSuccess();
-  event.target.reset();
+  submitOrder(event.target);
 });
 
 renderCategories();
