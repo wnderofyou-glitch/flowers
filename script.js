@@ -358,6 +358,7 @@ function submitOrder(form) {
   showPage('home-page');
 }
 
+
 document.addEventListener('click', (event) => {
   const pageButton = event.target.closest('[data-page]');
   if (pageButton) showPage(pageButton.dataset.page);
